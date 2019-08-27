@@ -1,0 +1,42 @@
+logging:
+  level: INFO
+  loggers:
+    com.ozioma.bank: DEBUG
+database:
+       # the name of your JDBC driver
+  driverClass: org.h2.Driver
+
+  # the username
+  user: sa
+
+  # the password
+  password: sa
+
+  # the JDBC URL
+  url: jdbc:h2:mem:FundTransfer;DB_CLOSE_DELAY=-1
+
+  # any properties specific to your JDBC driver:
+  properties:
+    charSet: UTF-8
+    hibernate.dialect: org.hibernate.dialect.H2Dialect
+
+  # the maximum amount of time to wait on an empty pool before throwing an exception
+  maxWaitForConnection: 3s
+
+  # the SQL query to run when validating a connection's liveness
+  validationQuery: "/* MyApplication Health Check */ SELECT 1"
+
+  # the minimum number of connections to keep open
+  minSize: 8
+
+  # the maximum number of connections to keep open
+  maxSize: 30
+swagger:
+  resourcePackage: resource
+  uriPrefix: /v1
+  title: Ozioma's fund transfer api
+  description: Resources for Ozioma's fund transfer pai
+server:
+  rootPath: /v1
+config:
+  appBaseUrl: localhost/v1/
