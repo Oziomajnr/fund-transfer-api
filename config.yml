@@ -31,8 +31,7 @@ database:
   maxSize: 30
 swagger:
   resourcePackage: resource
-  uriPrefix: /v1
   title: Ozioma's fund transfer api
   description: Resources for Ozioma's fund transfer pai
 server:
-  rootPath: /v1
+  rootPath:
