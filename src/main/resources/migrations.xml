@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet id="1" author="ozioma">
+        <createTable tableName="account">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="accountIdentifier" type="varchar(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="accountBalance" type="INT" defaultValueNumeric="0">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="CURRENT_TIMESTAMP" name="createdAt" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP" name="updatedAt"
+                    type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="fundTransferRequest">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="transactionId" type="varchar(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="sourceAccount" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="amountInCents" type="INT" defaultValueNumeric="100">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="destinationAccount" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column defaultValueComputed="CURRENT_TIMESTAMP" name="createdAt" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP" name="updatedAt"
+                    type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createIndex indexName="accountIdentifierwvcpiwey" tableName="account">
+            <column name="accountIdentifier"/>
+        </createIndex>
+
+        <createIndex indexName="transactionId_index_ipwdyfiyiw" tableName="fundTransferRequest">
+            <column name="transactionId"/>
+        </createIndex>
+
+        <createIndex indexName="sourceAccount_index_wqevjwevj" tableName="fundTransferRequest">
+            <column name="sourceAccount"/>
+        </createIndex>
+
+        <createIndex indexName="destinationAccount_index__iwvhwhvw" tableName="fundTransferRequest">
+            <column name="destinationAccount"/>
+        </createIndex>
+
+        <addForeignKeyConstraint baseColumnNames="sourceAccount" baseTableName="fundTransferRequest"
+                                 constraintName="FK__poll_vote" deferrable="false"
+                                 initiallyDeferred="false" onDelete="RESTRICT" onUpdate="NO ACTION"
+                                 referencedColumnNames="accountIdentifier"
+                                 referencedTableName="account"/>
+    </changeSet>
+</databaseChangeLog>

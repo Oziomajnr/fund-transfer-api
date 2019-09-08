@@ -5,15 +5,13 @@ logging:
 database:
        # the name of your JDBC driver
   driverClass: org.h2.Driver
-
   # the username
   user: sa
-
   # the password
   password: sa
 
   # the JDBC URL
-  url: jdbc:h2:mem:FundTransfer;DB_CLOSE_DELAY=-1
+  url: jdbc:h2:./build/h2db;DB_CLOSE_DELAY=-1
 
   # any properties specific to your JDBC driver:
   properties:
@@ -39,4 +37,4 @@ swagger:
 server:
   rootPath: /v1
 config:
-  appBaseUrl: localhost/v1/
+  appBaseUrl: localhost:8080/v1/

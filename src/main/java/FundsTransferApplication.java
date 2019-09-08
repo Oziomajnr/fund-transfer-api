@@ -1,24 +1,30 @@
-package fundtransfer;
-
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import fundtransfer.resource.HomeResource;
+import dao.AccountDao;
+import dao.TransferProcessorDao;
+import exception.mappers.InssuficientBalanceExceptionMapper;
+import exception.mappers.NotFoundExecptionMapper;
+import exception.mappers.ValidationExceptionMapper;
 import io.dropwizard.Application;
+import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.jdbi.DBIHealthCheck;
+import io.dropwizard.jersey.errors.EarlyEofExceptionMapper;
 import io.dropwizard.jersey.errors.LoggingExceptionMapper;
+import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.server.DefaultServerFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
-import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.skife.jdbi.v2.DBI;
+import resource.FundTransferResource;
+import service.AccountService;
+import service.BankAccountService;
+import service.DirectFundTransferService;
+import service.FundTransferService;
 
-import javax.servlet.DispatcherType;
-import javax.servlet.FilterRegistration;
-import java.util.EnumSet;
 
 public class FundsTransferApplication extends Application<FundsTransferConfiguration> {
 
@@ -39,20 +45,18 @@ public class FundsTransferApplication extends Application<FundsTransferConfigura
                 return configuration.getSwaggerBundleConfiguration();
             }
         });
+
+        bootstrap.addBundle(new MigrationsBundle<FundsTransferConfiguration>() {
+            @Override
+            public DataSourceFactory getDataSourceFactory(FundsTransferConfiguration configuration) {
+                return configuration.getDataSourceFactory();
+            }
+        });
     }
 
     @Override
     public void run(final FundsTransferConfiguration configuration,
                     final Environment environment) {
-
-        final FilterRegistration.Dynamic cors = environment.servlets().addFilter("CORS", CrossOriginFilter.class);
-
-        cors.setInitParameter("allowedOrigins", "*");
-        cors.setInitParameter("allowedHeaders", "X-Requested-With,Content-Type,Accept,Origin,Authorization");
-        cors.setInitParameter("allowedMethods", "OPTIONS,GET,PUT,POST,DELETE,HEAD");
-
-        cors.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "/*");
-
         ((DefaultServerFactory) configuration.getServerFactory()).setRegisterDefaultExceptionMappers(false);
         environment.jersey().register(new LoggingExceptionMapper<Throwable>() {
         });
@@ -62,8 +66,10 @@ public class FundsTransferApplication extends Application<FundsTransferConfigura
 
         Injector injector = createInjector(configuration, jdbi);
 
+        registerExceptionMappers(environment);
+
         //register api resource
-        environment.jersey().register(injector.getInstance(HomeResource.class));
+        environment.jersey().register(injector.getInstance(FundTransferResource.class));
 
         environment.healthChecks().register("database", new DBIHealthCheck(jdbi, "SELECT 1"));
 
@@ -76,10 +82,22 @@ public class FundsTransferApplication extends Application<FundsTransferConfigura
                 bind(AppConfiguration.class).toInstance(config.getAppConfig());
 
                 // service binding
+                bind(FundTransferService.class).to(DirectFundTransferService.class);
+                bind(AccountService.class).to(BankAccountService.class);
 
                 //dao binding
+                bind(TransferProcessorDao.class).toInstance(jdbi.onDemand(TransferProcessorDao.class));
+                bind(AccountDao.class).toInstance(jdbi.onDemand(AccountDao.class));
             }
         });
+    }
+
+    private void registerExceptionMappers(final Environment environment) {
+        environment.jersey().register(new ValidationExceptionMapper() {
+        });
+        environment.jersey().register(new EarlyEofExceptionMapper());
+        environment.jersey().register(new NotFoundExecptionMapper());
+        environment.jersey().register(new InssuficientBalanceExceptionMapper());
     }
 
 }
