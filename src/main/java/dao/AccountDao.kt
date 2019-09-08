@@ -18,15 +18,9 @@ abstract class AccountDao {
     abstract fun getAccountByIdentifier(@Bind("accountIdentifier") id: String): Account
 
     @SqlUpdate("insert into account"
-            + "		(id, accountIdentifier,  accountBalance, createdAt, updatedAt) "
+            + "		(accountIdentifier,  accountBalance, createdAt, updatedAt) "
             + "values"
-            + "		(:id, :accountIdentifier, :accountBalance, :createdAt,  :updatedAt)")
+            + "		(:accountIdentifier, :accountBalance, :createdAt,  :updatedAt)")
     @GetGeneratedKeys
     abstract fun createAccount(@BindBean account: Account): Int
-
-    @SqlUpdate("update account "
-            + "set id = :id, accountIdentifier = :accountIdentifier,  accountBalance = :accountBalance, " +
-            "createdAt = :createdAt, updatedAt = :updatedAt" +
-            " where id = :id")
-    abstract fun updateAccount(@BindBean account: Account)
 }

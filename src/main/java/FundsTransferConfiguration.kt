@@ -12,10 +12,6 @@ class FundsTransferConfiguration : Configuration() {
     @JsonProperty("database")
     val dataSourceFactory = DataSourceFactory()
 
-    @JsonProperty("config")
-    val appConfig: AppConfiguration? = null
-
     @JsonProperty("swagger")
     val swaggerBundleConfiguration: SwaggerBundleConfiguration? = null
-
 }

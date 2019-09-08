@@ -1,4 +1,4 @@
 package api.model
 
-class ApiReponse {
+class ApiReponse() {
 }

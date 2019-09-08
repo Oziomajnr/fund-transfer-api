@@ -8,7 +8,7 @@ import javax.ws.rs.ext.ExceptionMapper
 
 class InssuficientBalanceExceptionMapper : ExceptionMapper<InsufficientBalanceException> {
     override fun toResponse(ex: InsufficientBalanceException): Response {
-        return Response.status(Response.Status.BAD_REQUEST.statusCode).entity(ex.message)
+        return Response.status(Response.Status.BAD_REQUEST.statusCode).entity(ex.data)
                 .type(MediaType.APPLICATION_JSON).build()
     }
 }

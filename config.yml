@@ -36,5 +36,3 @@ swagger:
   description: Resources for Ozioma's fund transfer pai
 server:
   rootPath: /v1
-config:
-  appBaseUrl: localhost:8080/v1/

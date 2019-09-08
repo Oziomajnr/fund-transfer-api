@@ -32,6 +32,10 @@ constructor(private val fundTransferService: FundTransferService,
         return Response.ok().entity(fundTransferService.transferFund(fundTransferApiRequest.toFundTransferRequest())).build()
     }
 
+    // Utility apis to help test application
+    /**
+     * Helper resource to create a bank account with an initial balamce
+     */
     @POST
     @Path("/account")
     @ApiOperation(value = "Create a user account", response = String::class)
@@ -39,6 +43,9 @@ constructor(private val fundTransferService: FundTransferService,
         return Response.ok().entity(accountService.createAccount(account)).build()
     }
 
+    /**
+     * helper resource to get a bank account  using its uniqu identifier
+     */
     @GET
     @Path("/account/identifier/{identifier}")
     @ApiOperation(value = "Get a user account", response = String::class)

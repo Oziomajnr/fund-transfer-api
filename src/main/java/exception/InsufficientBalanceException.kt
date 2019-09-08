@@ -1,3 +1,3 @@
 package exception
 
-class InsufficientBalanceException(message: String) : Exception(message)
+class InsufficientBalanceException(override val data: Any, message: String) : ApiException(message, data)

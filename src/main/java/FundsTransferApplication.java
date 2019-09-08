@@ -4,7 +4,7 @@ import com.google.inject.Injector;
 import dao.AccountDao;
 import dao.TransferProcessorDao;
 import exception.mappers.InssuficientBalanceExceptionMapper;
-import exception.mappers.NotFoundExecptionMapper;
+import exception.mappers.AccountNotFoundExceptionMapper;
 import exception.mappers.ValidationExceptionMapper;
 import io.dropwizard.Application;
 import io.dropwizard.db.DataSourceFactory;
@@ -21,8 +21,8 @@ import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import org.skife.jdbi.v2.DBI;
 import resource.FundTransferResource;
 import service.AccountService;
-import service.BankAccountService;
-import service.DirectFundTransferService;
+import service.implementation.BankAccountService;
+import service.implementation.DirectFundTransferService;
 import service.FundTransferService;
 
 
@@ -79,8 +79,6 @@ public class FundsTransferApplication extends Application<FundsTransferConfigura
         return Guice.createInjector(new AbstractModule() {
             @Override
             protected void configure() {
-                bind(AppConfiguration.class).toInstance(config.getAppConfig());
-
                 // service binding
                 bind(FundTransferService.class).to(DirectFundTransferService.class);
                 bind(AccountService.class).to(BankAccountService.class);
@@ -96,7 +94,7 @@ public class FundsTransferApplication extends Application<FundsTransferConfigura
         environment.jersey().register(new ValidationExceptionMapper() {
         });
         environment.jersey().register(new EarlyEofExceptionMapper());
-        environment.jersey().register(new NotFoundExecptionMapper());
+        environment.jersey().register(new AccountNotFoundExceptionMapper());
         environment.jersey().register(new InssuficientBalanceExceptionMapper());
     }
 

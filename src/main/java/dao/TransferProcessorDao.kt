@@ -1,5 +1,7 @@
 package dao
 
+import api.model.FundTransferResponse
+import exception.AccountNotFoundException
 import exception.InsufficientBalanceException
 import mapper.AccountMapper
 import mapper.FundTransferRequestMapper
@@ -7,8 +9,6 @@ import model.Account
 import model.FundTransferRequest
 import org.skife.jdbi.v2.sqlobject.*
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper
-
-import javax.ws.rs.NotFoundException
 
 /**
  * Perform any fund transfer processing here
@@ -47,13 +47,16 @@ abstract class TransferProcessorDao {
     @Transaction
     @Throws(InsufficientBalanceException::class)
     fun processFundTransfer(fundTransferRequest: FundTransferRequest): Boolean {
+
         val sourceAccount = getAccountByIdentifier(fundTransferRequest.sourceAccount)
-                ?: throw NotFoundException("Sender account not found")
+                ?: throw AccountNotFoundException(FundTransferResponse.getInvalidSourceAccountRespose(fundTransferRequest),
+                        "Sender account not found")
         if (sourceAccount.accountBalance < fundTransferRequest.amountInCents) {
-            throw InsufficientBalanceException("Sender account does not have enough balance")
+            throw InsufficientBalanceException(FundTransferResponse.getInsufficientBalance(fundTransferRequest), "Sender account does not have enough balance")
         }
+
         val destinationAccount = getAccountByIdentifier(fundTransferRequest.destinationAccount)
-                ?: throw NotFoundException("Destination account not found")
+                ?: throw AccountNotFoundException(FundTransferResponse.getInvalidDestinationAccountRespose(fundTransferRequest), "Destination account not found")
         fundTransferRequest.id = createFundTransferRequest(fundTransferRequest)
 
         sourceAccount.deductMoneyToAccount(fundTransferRequest.amountInCents)
