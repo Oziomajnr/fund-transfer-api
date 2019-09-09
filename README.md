@@ -10,4 +10,6 @@ How to start the FundsTransfer application
 1. Some resources have been created to make sure that you can test the functionality of the application, you can create a bank account using the resource 
 http://localhost:8080/swagger#!/fund/createUserAccount 
 you can test fund transfer between two users using the resource http://localhost:8080/swagger#!/fund/transferFunds
+1. To clear and reset the in memory database run the command `java -jar target/fund-transfer-api-0.0.1.jar db drop-all config.yml --confirm-delete-everything`
+
 
